@@ -6,6 +6,13 @@
 
 This is a simple web tool for text encryption and decryption using a 4-digit key. The tool allows users to enter text, input a 4-digit key, and choose between encryption and decryption. The tool supports both English and Chinese interfaces.
 
+## 演示 | Demo
+
+您可以访问以下网址查看该工具的在线演示：
+You can visit the following URL to see the online demo of the tool:
+
+[演示网址 | Demo URL](https://text-encryption-tool-c1u.pages.dev/)
+
 ## 功能 | Features
 
 - 使用四位数字密钥加密和解密文本。
