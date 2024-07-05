@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Encryption/Decryption</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+            max-width: 600px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        textarea, input, button {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .key-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .key-container input {
+            width: 22%;
+            min-width: 40px; /* Ensure minimum width for small screens */
+        }
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 5px 0;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .toggle-button {
+            background-color: #28a745;
+        }
+        .toggle-button:hover {
+            background-color: #218838;
+        }
+        .lang-button {
+            background-color: #ffc107;
+        }
+        .lang-button:hover {
+            background-color: #e0a800;
+        }
+        .copy-button {
+            background-color: #17a2b8;
+            width: auto;
+            padding: 5px 10px;
+        }
+        .copy-button:hover {
+            background-color: #138496;
+        }
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                padding: 10px;
+            }
+            .key-container input {
+                padding: 5px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="title">Text Encryption/Decryption</h1>
+        <textarea id="textInput" rows="4" placeholder="Enter your text here"></textarea>
+        <div class="key-container">
+            <input type="text" id="keyInput1" maxlength="1" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="0">
+            <input type="text" id="keyInput2" maxlength="1" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="0">
+            <input type="text" id="keyInput3" maxlength="1" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="0">
+            <input type="text" id="keyInput4" maxlength="1" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="0">
+        </div>
+        <div class="button-group">
+            <button id="processButton" onclick="processText()">Encrypt</button>
+            <button class="toggle-button" onclick="toggleMode()">Switch to Decrypt</button>
+            <button class="lang-button" onclick="toggleLanguage()">Switch to 中文</button>
+        </div>
+        <textarea id="outputText" rows="4" readonly placeholder="Output text will appear here"></textarea>
+        <button class="copy-button" onclick="copyText('outputText')">Copy</button>
+    </div>
+
+    <script>
+        // JavaScript code remains the same as in the previous version
+        let isEncryptMode = true;
+        let isEnglish = true;
+
+        function toggleMode() {
+            isEncryptMode = !isEncryptMode;
+            const modeButton = document.querySelector('.toggle-button');
+            modeButton.textContent = isEncryptMode ? (isEnglish ? 'Switch to Decrypt' : '切换到解密') : (isEnglish ? 'Switch to Encrypt' : '切换到加密');
+            document.getElementById('processButton').textContent = isEncryptMode ? (isEnglish ? 'Encrypt' : '加密') : (isEnglish ? 'Decrypt' : '解密');
+        }
+
+        function toggleLanguage() {
+            isEnglish = !isEnglish;
+            document.getElementById('title').textContent = isEnglish ? 'Text Encryption/Decryption' : '文本加密/解密';
+            document.getElementById('textInput').placeholder = isEnglish ? 'Enter your text here' : '在此输入文本';
+            document.getElementById('outputText').placeholder = isEnglish ? 'Output text will appear here' : '输出文本将在此显示';
+            document.querySelector('.lang-button').textContent = isEnglish ? 'Switch to 中文' : '切换到 English';
+            document.querySelector('.copy-button').textContent = isEnglish ? 'Copy' : '复制';
+            toggleMode();
+        }
+
+        function getKey() {
+            const key1 = parseInt(document.getElementById('keyInput1').value) || 0;
+            const key2 = parseInt(document.getElementById('keyInput2').value) || 0;
+            const key3 = parseInt(document.getElementById('keyInput3').value) || 0;
+            const key4 = parseInt(document.getElementById('keyInput4').value) || 0;
+            return key1 * 1000 + key2 * 100 + key3 * 10 + key4;
+        }
+
+        function processText() {
+            const text = document.getElementById('textInput').value;
+            const key = getKey();
+            if (key < 1000 || key > 9999) {
+                alert(isEnglish ? 'Please enter a valid 4-digit key.' : '请输入有效的4位密钥。');
+                return;
+            }
+
+            const processedText = text.split('').map(char => {
+                const charCode = char.charCodeAt(0);
+                return String.fromCharCode(isEncryptMode ? charCode + key : charCode - key);
+            }).join('');
+
+            document.getElementById('outputText').value = processedText;
+        }
+
+        function copyText(elementId) {
+            const textarea = document.getElementById(elementId);
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // For mobile devices
+            document.execCommand("copy");
+            alert(isEnglish ? "Copied the text: " : "复制文本：" + textarea.value);
+        }
+    </script>
+</body>
+</html>
